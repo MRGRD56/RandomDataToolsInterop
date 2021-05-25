@@ -17,5 +17,7 @@
             Code = "woman",
             Name = "Женщина"
         };
+
+        public override string ToString() => Name;
     }
 }
