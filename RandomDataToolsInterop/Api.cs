@@ -16,35 +16,49 @@ namespace RandomDataToolsInterop
         private const string ServerUri = "https://api.randomdatatools.ru";
 
         private static DateTime? _latestRequestUtcTime;
-        private const int RequestsInterval = 1000;
 
-        private static readonly Semaphore _httpRequestSemaphore = new(1, 1);
+        private static readonly Semaphore _httpRequestSemaphore;
+
+        static Api()
+        {
+            _httpRequestSemaphore = new Semaphore(Settings.ParallelRequestsCount, Settings.ParallelRequestsCount);
+        }
+
+        private static HttpClient GetHttpClient() => 
+            Settings.UseSingleHttpClient ? _httpClient : new HttpClient();
+
+        public static ApiSettings Settings { get; } = new();
 
         private static async Task<List<PersonRawInfo>> GetPersonRawInfoAsync(int count, Gender gender = null)
         {
-            _httpRequestSemaphore.WaitOne();
-            
             if (count is < 0 or > 100)
             {
-                _httpRequestSemaphore.Release();
                 throw new ArgumentException("Persons count cannot be less than 0 or more than 100", nameof(count));
+            }
+            
+            if (Settings.UseDelayBetweenRequests)
+            {
+                _httpRequestSemaphore.WaitOne();
             }
 
             var genderParameter = gender?.Code ?? "unset";
 
-            var json = await _httpClient.GetStringAsync($"{ServerUri}?count={count}&gender={genderParameter}");
+            var json = await GetHttpClient().GetStringAsync($"{ServerUri}?count={count}&gender={genderParameter}");
             _latestRequestUtcTime = DateTime.UtcNow;
             
             #pragma warning disable 4014
-            
-            //Ждём 1 секунду, прежде чем разрешить сделать следующий запрос, для избежания TooManyRequests.
-            //Не используем await, ожидание не нужно.
-            Task.Run(() =>
+
+            if (Settings.UseDelayBetweenRequests)
             {
-                while (Math.Abs(DateTime.UtcNow.Subtract(_latestRequestUtcTime.Value).TotalMilliseconds) < RequestsInterval) { }
-                _httpRequestSemaphore.Release();
-            });
-            
+                //Ждём, прежде чем разрешить сделать следующий запрос, во избежание TooManyRequests.
+                //Не используем await, ожидание не нужно.
+                Task.Run(() =>
+                {
+                    while (Math.Abs(DateTime.UtcNow.Subtract(_latestRequestUtcTime.Value).TotalMilliseconds) < Settings.RequestsInterval) { }
+                    _httpRequestSemaphore.Release();
+                });
+            }
+
             #pragma warning restore 4014
             
             try
@@ -54,15 +68,15 @@ namespace RandomDataToolsInterop
                     : JsonConvert.DeserializeObject<List<PersonRawInfo>>(json);
 
                 var exception = GetRequestException(json);
-                if (exception != null)
-                {
-                    throw exception;
-                }
+                if (exception == null) return result;
 
-                return result;
+                ReleaseRequestSemaphore();
+                throw exception;
+
             }
             catch (JsonSerializationException)
             {
+                ReleaseRequestSemaphore();
                 throw GetRequestException(json);
             }
         }
@@ -79,12 +93,19 @@ namespace RandomDataToolsInterop
                 var exception = new HttpRequestException($"{error.ErrorCode} \"{error.ErrorMessage}\"");
                 exception.Data["StatusCode"] = error.ErrorCode;
                 exception.Data["ErrorMessage"] = error.ErrorMessage;
-                _httpRequestSemaphore.Release();
                 return exception;
             }
             catch (JsonSerializationException)
             {
                 return null;
+            }
+        }
+
+        private static void ReleaseRequestSemaphore()
+        {
+            if (Settings.UseDelayBetweenRequests)
+            {
+                _httpRequestSemaphore.Release();
             }
         }
 

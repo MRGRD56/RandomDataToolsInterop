@@ -22,7 +22,7 @@ namespace RandomDataToolsInterop.Tests
         [Test]
         public async Task GetPeopleAsyncTest()
         {
-            const int count = 7;
+            const int count = 100;
             var people = await Api.GetPeopleAsync(count);
             Assert.NotNull(people);
             Assert.AreEqual(count, people.Count);
@@ -38,7 +38,7 @@ namespace RandomDataToolsInterop.Tests
         [Test]
         public void GetPeopleTest()
         {
-            const int count = 7;
+            const int count = 100;
             var people = Api.GetPeople(count);
             Assert.NotNull(people);
             Assert.AreEqual(count, people.Count);
