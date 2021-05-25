@@ -54,7 +54,7 @@ namespace RandomDataToolsInterop.Models
             var person = new Person
             {
                 LastName = raw.LastName,
-                FirstName = raw.LastName,
+                FirstName = raw.FirstName,
                 Patronymic = raw.FatherName,
                 DateOfBirth = DateTime.Parse(raw.DateOfBirth, new CultureInfo("ru-RU")),
                 Age = raw.YearsOld,
