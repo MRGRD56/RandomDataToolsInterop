@@ -6,6 +6,8 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Authors>MRGRD56</Authors>
         <Description>https://randomdatatools.ru/ interop library.</Description>
+        <PackageProjectUrl>https://github.com/MRGRD56/RandomDataToolsInterop</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/MRGRD56/RandomDataToolsInterop</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>

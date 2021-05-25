@@ -18,7 +18,7 @@ namespace RandomDataToolsInterop.Models
 
         public string CardNumber { get; set; }
 
-        public DateTime CardDate { get; set; }
+        public DateTime? CardDate { get; set; }
 
         public string CardCvc { get; set; }
     }

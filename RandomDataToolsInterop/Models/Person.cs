@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Globalization;
 
 namespace RandomDataToolsInterop.Models
 {
@@ -45,13 +47,16 @@ namespace RandomDataToolsInterop.Models
             {
                 gender = Gender.Female;
             }
+ 
+            var cardDate = DateTime.ParseExact(raw.BankDate, "MM/yy", new CultureInfo("ru-RU"));
+            cardDate = new DateTime(cardDate.Year, cardDate.Month, DateTime.DaysInMonth(cardDate.Year, cardDate.Month));
             
-            return new Person
+            var person = new Person
             {
                 LastName = raw.LastName,
                 FirstName = raw.LastName,
                 Patronymic = raw.FatherName,
-                DateOfBirth = DateTime.Parse(raw.DateOfBirth),
+                DateOfBirth = DateTime.Parse(raw.DateOfBirth, new CultureInfo("ru-RU")),
                 Age = raw.YearsOld,
                 Phone = raw.Phone,
                 Login = raw.Login,
@@ -73,7 +78,7 @@ namespace RandomDataToolsInterop.Models
                     Apartment = raw.Apartment,
                     Code = raw.PasportCode,
                     IssuedBy = raw.PasportOtd,
-                    IssueDate = DateTime.Parse(raw.PasportDate)
+                    IssueDate = DateTime.Parse(raw.PasportDate, new CultureInfo("ru-RU"))
                 },
                 Documents = new Documents
                 {
@@ -93,7 +98,7 @@ namespace RandomDataToolsInterop.Models
                     Num = raw.BankNum,
                     Client = raw.BankClient,
                     CardNumber = raw.BankCard,
-                    CardDate = DateTime.Parse(raw.BankDate),
+                    CardDate = cardDate,
                     CardCvc = raw.BankCvc.ToString()
                 },
                 Education = new Education
@@ -115,10 +120,12 @@ namespace RandomDataToolsInterop.Models
                     Sts = raw.CarSts,
                     Vin = raw.CarVin,
                     Year = raw.CarYear,
-                    PtsDate = DateTime.Parse(raw.CarPtsDate),
-                    StsDate = DateTime.Parse(raw.CarStsDate)
+                    PtsDate = DateTime.Parse(raw.CarPtsDate, new CultureInfo("ru-RU")),
+                    StsDate = DateTime.Parse(raw.CarStsDate, new CultureInfo("ru-RU"))
                 }
             };
+
+            return person;
         }
     }
 }
