@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 
@@ -12,6 +13,8 @@ namespace RandomDataToolsInterop.Models
 
         public string Patronymic { get; set; }
 
+        public string FullName => string.Join(" ", LastName ?? "", FirstName ?? "", Patronymic ?? "");
+        
         public DateTime DateOfBirth { get; set; }
 
         public int Age { get; set; }
