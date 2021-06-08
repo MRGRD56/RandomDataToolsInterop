@@ -6,12 +6,18 @@
         
         public string Name { get; set; }
 
+        /// <summary>
+        /// Мужской пол.
+        /// </summary>
         public static readonly Gender Male = new()
         {
             Code = "man",
             Name = "Мужчина"
         };
 
+        /// <summary>
+        /// Женский пол.
+        /// </summary>
         public static readonly Gender Female = new()
         {
             Code = "woman",

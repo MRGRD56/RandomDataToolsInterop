@@ -7,36 +7,92 @@ namespace RandomDataToolsInterop.Models
 {
     public class Person
     {
+        /// <summary>
+        /// Фамилия.
+        /// </summary>
         public string LastName { get; set; }
 
+        /// <summary>
+        /// Имя.
+        /// </summary>
         public string FirstName { get; set; }
 
+        /// <summary>
+        /// Отчество.
+        /// </summary>
         public string Patronymic { get; set; }
 
+        /// <summary>
+        /// ФИО, например "Иванов Сергей Петрович".
+        /// </summary>
         public string FullName => string.Join(" ", LastName ?? "", FirstName ?? "", Patronymic ?? "");
         
+        /// <summary>
+        /// Фамилия и инициалы, например "Иванов С. П."
+        /// </summary>
+        public string ShortFullName => string.Join(" ", 
+            LastName ?? "", 
+            FirstName.Length >= 1 ? $"{FirstName[0]}." : "", 
+            Patronymic.Length >= 1 ? $"{Patronymic[0]}." : "");
+        
+        /// <summary>
+        /// Дата рождения.
+        /// </summary>
         public DateTime DateOfBirth { get; set; }
 
+        /// <summary>
+        /// Возраст.
+        /// </summary>
         public int Age { get; set; }
         
+        /// <summary>
+        /// Номер телефона.
+        /// </summary>
         public string Phone { get; set; }
 
+        /// <summary>
+        /// Логин.
+        /// </summary>
         public string Login { get; set; }
 
+        /// <summary>
+        /// Пароль.
+        /// </summary>
         public string Password { get; set; }
 
+        /// <summary>
+        /// Адрес электронной почты.
+        /// </summary>
         public string Email { get; set; }
 
+        /// <summary>
+        /// Пол.
+        /// </summary>
         public Gender Gender { get; set; }
         
+        /// <summary>
+        /// Паспортные данные.
+        /// </summary>
         public Passport Passport { get; set; }
         
+        /// <summary>
+        /// Документы.
+        /// </summary>
         public Documents Documents { get; set; }
         
+        /// <summary>
+        /// Платёжная информация.
+        /// </summary>
         public PaymentInfo PaymentInfo { get; set; }
         
+        /// <summary>
+        /// Образование.
+        /// </summary>
         public Education Education { get; set; }
         
+        /// <summary>
+        /// Транспортное средство.
+        /// </summary>
         public Car Car { get; set; }
 
         internal static Person FromRawInfo(PersonRawInfo raw)
