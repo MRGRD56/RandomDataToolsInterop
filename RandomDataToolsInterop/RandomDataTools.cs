@@ -9,7 +9,7 @@ using RandomDataToolsInterop.Models;
 
 namespace RandomDataToolsInterop
 {
-    public static class Api
+    public static class RandomDataTools
     {
         private static readonly HttpClient _httpClient = new();
 
@@ -19,7 +19,7 @@ namespace RandomDataToolsInterop
 
         private static readonly Semaphore _httpRequestSemaphore;
 
-        static Api()
+        static RandomDataTools()
         {
             _httpRequestSemaphore = new Semaphore(Settings.ParallelRequestsCount, Settings.ParallelRequestsCount);
         }
@@ -46,20 +46,14 @@ namespace RandomDataToolsInterop
             var json = await GetHttpClient().GetStringAsync($"{ServerUri}?count={count}&gender={genderParameter}");
             _latestRequestUtcTime = DateTime.UtcNow;
             
-            #pragma warning disable 4014
-
             if (Settings.UseDelayBetweenRequests)
             {
-                //Ждём, прежде чем разрешить сделать следующий запрос, во избежание TooManyRequests.
-                //Не используем await, ожидание не нужно.
-                Task.Run(() =>
+                _ = Task.Run(() =>
                 {
                     while (Math.Abs(DateTime.UtcNow.Subtract(_latestRequestUtcTime.Value).TotalMilliseconds) < Settings.RequestsInterval) { }
                     _httpRequestSemaphore.Release();
                 });
             }
-
-            #pragma warning restore 4014
             
             try
             {

@@ -15,7 +15,7 @@ namespace RandomDataToolsInterop.Tests
         [Test]
         public async Task GetPersonAsyncTest()
         {
-            var person = await Api.GetPersonAsync();
+            var person = await RandomDataTools.GetPersonAsync();
             Assert.NotNull(person);
         }
         
@@ -23,7 +23,7 @@ namespace RandomDataToolsInterop.Tests
         public async Task GetPeopleAsyncTest()
         {
             const int count = 100;
-            var people = await Api.GetPeopleAsync(count);
+            var people = await RandomDataTools.GetPeopleAsync(count);
             Assert.NotNull(people);
             Assert.AreEqual(count, people.Count);
         }
@@ -31,7 +31,7 @@ namespace RandomDataToolsInterop.Tests
         [Test]
         public void GetPersonTest()
         {
-            var person = Api.GetPerson();
+            var person = RandomDataTools.GetPerson();
             Assert.NotNull(person);
         }
         
@@ -39,7 +39,7 @@ namespace RandomDataToolsInterop.Tests
         public void GetPeopleTest()
         {
             const int count = 100;
-            var people = Api.GetPeople(count);
+            var people = RandomDataTools.GetPeople(count);
             Assert.NotNull(people);
             Assert.AreEqual(count, people.Count);
         }
@@ -49,9 +49,9 @@ namespace RandomDataToolsInterop.Tests
         {
             try
             {
-                await Api.GetPersonAsync();
-                await Api.GetPersonAsync();
-                await Api.GetPersonAsync();
+                await RandomDataTools.GetPersonAsync();
+                await RandomDataTools.GetPersonAsync();
+                await RandomDataTools.GetPersonAsync();
             }
             catch (HttpRequestException exception)
             {
